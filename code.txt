@@ -1,0 +1,115 @@
+======================================================================
+  Step-by-Step Guide to Replicate Detectron2 Training & Visualization
+======================================================================
+
+This guide details the exact steps to create a stable Conda environment,
+install the correct dependencies (avoiding the NumPy 2.0 issue), and
+run your training and visualization scripts.
+
+---------------------------------
+--  PHASE 1: ENVIRONMENT SETUP --
+---------------------------------
+
+# 1. Open a new terminal or Anaconda Prompt.
+
+# 2. Create a new Conda environment. We'll use Python 3.9, which is very stable
+#    with these libraries.
+conda create -n d2_project_env python=3.9 -y
+
+# 3. Activate the new environment. You must do this every time you open a new terminal
+#    to work on this project.
+conda activate d2_project_env
+
+# 4. Install PyTorch and CUDA Toolkit. This is the most critical step.
+#    We will install a specific, known-good version of PyTorch.
+#    NOTE: This command is for CUDA 11.8. If you have a different CUDA version,
+#    visit https://pytorch.org/get-started/previous-versions/ to find the
+#    correct command for your setup.
+conda install pytorch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 pytorch-cuda=11.8 -c pytorch -c nvidia -y
+
+# 5. Install Detectron2. It must be compiled against the version of PyTorch you just installed.
+pip install 'git+https://github.com/facebookresearch/detectron2.git'
+
+# 6. Install other necessary libraries.
+pip install opencv-python pycocotools tensorboard
+
+# 7. *** IMPORTANT: PREVENT THE NUMPY 2.0 ERROR ***
+#    The NumPy 2.0+ update is incompatible with the version of PyTorch we installed.
+#    To prevent the `RuntimeError: Could not infer dtype of numpy.float32`, we will
+#    force the installation of a compatible NumPy version (anything less than 2.0).
+pip install "numpy<2.0"
+
+# At this point, your environment is fully configured and stable.
+
+
+---------------------------------
+--   PHASE 2: PROJECT SETUP    --
+---------------------------------
+
+# 1. Create a main project folder, for example, `HVAC_project`.
+
+# 2. Inside `HVAC_project`, place your files to create the following structure:
+#
+#    HVAC_project/
+#    ├── datasets/
+#    │   └── blueprint_notes_rescaled/
+#    │       ├── annotations/
+#    │       │   ├── instances_train.json
+#    │       │   └── instances_val.json
+#    │       ├── train/
+#    │       │   ├── image1.jpg
+#    │       │   └── ...
+#    │       └── val/
+#    │           ├── image2.jpg
+#    │           └── ...
+#    ├── train_detectron.py
+#    └── visualize.py
+#
+
+# 3. Navigate into your project directory in your terminal.
+#    (Replace with the actual path to your folder)
+cd path/to/HVAC_project
+
+
+---------------------------------
+--      PHASE 3: TRAINING      --
+---------------------------------
+
+# 1. Ensure your conda environment is still active.
+#    If not, run: conda activate d2_project_env
+
+# 2. Run the training script.
+python train_detectron.py
+
+# 3. WHAT TO EXPECT:
+#    - You will see the training logs printed to the console, with the 'total_loss' decreasing over time.
+#    - A new directory named 'output' will be created in your project folder.
+#    - When training is complete, the file 'model_final.pth' will be inside the 'output' directory.
+#      This is your trained model.
+
+
+---------------------------------------------------
+-- PHASE 4: VISUALIZATION & CHECKING THE RESULTS --
+---------------------------------------------------
+
+# After training is finished, you can see what your model has learned.
+
+# 1. OPTIONAL BUT RECOMMENDED: Analyze the training graphs with TensorBoard.
+#    This command reads the log files in the 'output' directory.
+tensorboard --logdir ./output
+#    Open the URL it provides (e.g., http://localhost:6006/) in your browser
+#    to see interactive graphs of your model's loss and accuracy (AP).
+
+# 2. Visualize the bounding boxes on your validation images.
+#    This script will load 'model_final.pth' and draw what it sees.
+python visualize.py
+
+# 3. WHAT TO EXPECT:
+#    - A window will pop up showing an image from your validation set.
+#    - The model's predicted bounding boxes, labels, and confidence scores will be drawn on the image.
+#    - Press any key to close the current image and see the next one.
+#    - After a few images, the script will finish.
+
+======================================================================
+                          PROCESS COMPLETE
+======================================================================
