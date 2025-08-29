@@ -4,8 +4,8 @@ import cv2
 from tqdm import tqdm
 from PIL import Image
 
-DOWNSCALED_JSON_PATH = "datasets/blueprint_notes_downscaled/annotations/instances_val.json"
-DOWNSCALED_IMAGE_DIR = "datasets/blueprint_notes_downscaled/val"
+DOWNSCALED_JSON_PATH = "datasets/blueprint_notes_rescaled/annotations/instances_val.json"
+DOWNSCALED_IMAGE_DIR = "datasets/blueprint_notes_rescaled/val"
 ORIGINAL_DIRS = [
     "datasets/blueprint_notes/train",
     "datasets/blueprint_notes/val"
