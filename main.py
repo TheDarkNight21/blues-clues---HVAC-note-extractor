@@ -4,6 +4,8 @@ from fastapi.responses import JSONResponse
 import requests
 import uvicorn
 
+from get_text_from_blueprint_pipeline import get_text_from_blueprint
+
 app = FastAPI()
 
 app.add_middleware(
@@ -37,18 +39,22 @@ async def extract_notes(pdf_url: str = None, file: UploadFile = File(None)):
             if not pdf_url.lower().endswith('.pdf'):
                 raise HTTPException(status_code=400, detail="URL must point to a PDF file")
             pdf_bytes = await download_pdf_from_url(pdf_url)
+            images = get_text_from_blueprint(pdf_bytes)
         else:
             # Handle uploaded file
             if file.content_type != "application/pdf":
                 raise HTTPException(status_code=400, detail="Only PDF files are supported")
             pdf_bytes = await file.read()
+            images = get_text_from_blueprint(pdf_bytes)
 
         # Now you can process pdf_bytes with your function
         # For example: result = process_pdf(pdf_bytes)
 
         return JSONResponse(content={
             "status": "success",
-            "size_bytes": len(pdf_bytes)
+            "size_bytes": len(pdf_bytes),
+            "image1": images[0],
+            "image2": images[1]
             # Add your processed data here
         })
 
