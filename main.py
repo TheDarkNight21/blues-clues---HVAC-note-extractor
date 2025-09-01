@@ -1,10 +1,10 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-import requests
+
 import uvicorn
 
-from get_text_from_blueprint_pipeline import get_text_from_blueprint
+from functions_for_api import *
 
 app = FastAPI()
 
@@ -15,14 +15,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-async def download_pdf_from_url(url: str):
-    try:
-        response = requests.get(url, timeout=10)
-        response.raise_for_status()  # Raises an HTTPError for bad responses (4xx, 5xx)
-        return response.content  # Returns PDF as bytes
-    except requests.exceptions.RequestException as e:
-        raise HTTPException(status_code=400, detail=f"Error downloading PDF: {str(e)}")
 
 @app.post("/api/extract-notes")
 async def extract_notes(pdf_url: str = None, file: UploadFile = File(None)):
@@ -40,6 +32,14 @@ async def extract_notes(pdf_url: str = None, file: UploadFile = File(None)):
                 raise HTTPException(status_code=400, detail="URL must point to a PDF file")
             pdf_bytes = await download_pdf_from_url(pdf_url)
             images = get_text_from_blueprint(pdf_bytes)
+
+            for image in images:
+                # 1. downscale image
+                # 2. run model / get annotations
+                # 3. upscale images and annotations
+                # so you need to store original resolutions for images if downscaling with same logic.
+                downscaled_image_scale = downscale_image(image, image)
+
         else:
             # Handle uploaded file
             if file.content_type != "application/pdf":

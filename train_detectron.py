@@ -18,7 +18,7 @@ def main():
     cfg.merge_from_file(model_zoo.get_config_file("COCO-Detection/faster_rcnn_R_50_FPN_3x.yaml"))
 
     # *** THE FIX: Force CPU to avoid MPS backend bugs ***
-    cfg.MODEL.DEVICE = "cpu"
+    cfg.MODEL.DEVICE = "cuda"
     print(f"Using device: {cfg.MODEL.DEVICE}")
 
     cfg.DATASETS.TRAIN = ("blueprint_train",)
