@@ -29,11 +29,15 @@ def predict_image(image_path, predictor):
     # --- 1. Load original image dimensions ---
     orig_im = cv2.imread(image_path)
     orig_h, orig_w = orig_im.shape[:2]
+    print("original height: " + str(orig_h) + "\n" + "original width: " + str(orig_w))
 
     # --- 2. Downscale the image (overwrite same path for simplicity) ---
-    downscale_ratio = downscale_image(image_path, image_path)  # modifies in place
-    im = cv2.imread(image_path)
+    # Make a copy in memory
+    output_path = "output_image.jpg"
+    downscale_ratio = downscale_image(image_path, output_path)  # modifies in place
+    im = cv2.imread(output_path)
     down_h, down_w = im.shape[:2]
+    print("downscaled height: " + str(down_h) + "\n" + "downscaled width: " + str(down_w))
 
     # --- 3. Run model on downscaled image ---
     outputs = predictor(im)
@@ -47,6 +51,7 @@ def predict_image(image_path, predictor):
     # If downscale_ratio = 0.5, then original was 2x bigger
     scale_x = orig_w / down_w
     scale_y = orig_h / down_h
+    print("rescale factors" + "\n" + "x: " +str(scale_x) + "\n" + "y:" + str(scale_y))
 
     # --- 5. Rescale boxes back to original resolution ---
     # boxes are in format [x1, y1, x2, y2]
@@ -76,6 +81,7 @@ def visualize_predictions(image_path, boxes, classes, scores, output_path=None, 
         score_threshold (float): Only show boxes above this confidence.
     """
     img = cv2.imread(image_path)
+    copy = img.copy()
 
     for bbox, cls, score in zip(boxes, classes, scores):
         if score < score_threshold:
@@ -84,7 +90,7 @@ def visualize_predictions(image_path, boxes, classes, scores, output_path=None, 
         x1, y1, x2, y2 = [int(v) for v in bbox]
 
         # Draw rectangle
-        cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
+        cv2.rectangle(copy, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
         # Label text: class name if available, else ID
         label = str(cls)
@@ -93,25 +99,25 @@ def visualize_predictions(image_path, boxes, classes, scores, output_path=None, 
         label = f"{label}: {score:.2f}"
 
         # Draw label
-        cv2.putText(img, label, (x1, y1 - 5),
+        cv2.putText(copy, label, (x1, y1 - 5),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
 
     # Save or show
     if output_path:
-        cv2.imwrite(output_path, img)
+        cv2.imwrite(output_path, copy)
         print(f"Saved visualization to {output_path}")
     else:
-        cv2.imshow("Predictions", img)
+        cv2.imshow("Predictions", copy)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 
 if __name__ == "__main__":
     predictor = load_model()
-    boxes, scores, classes = predict_image(r"C:\Users\Owner\PycharmProjects\HVAC-notes-extractorRound2\datasets\blueprint_notes\val\161fab07-Firehouse_Subs_Tayor_MI_2024-10-8_Bid__Permit_Submission_page_20.jpg", predictor)
+    boxes, scores, classes = predict_image(r"C:\Users\Owner\PycharmProjects\HVAC-notes-extractorRound2\datasets\blueprint_notes\val\Firehouse Subs Tayor, MI_2024-10-8 Bid & Permit Submission_page_20.jpg", predictor)
 
     # visualize results on original image
     visualize_predictions(
-        r"C:\Users\Owner\PycharmProjects\HVAC-notes-extractorRound2\datasets\blueprint_notes\val\161fab07-Firehouse_Subs_Tayor_MI_2024-10-8_Bid__Permit_Submission_page_20.jpg",
+        r"C:\Users\Owner\PycharmProjects\HVAC-notes-extractorRound2\datasets\blueprint_notes\val\Firehouse Subs Tayor, MI_2024-10-8 Bid & Permit Submission_page_20.jpg",
         boxes,
         classes,
         scores,
