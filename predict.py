@@ -33,7 +33,7 @@ def predict_image(image_path, predictor):
 
     # --- 2. Downscale the image (overwrite same path for simplicity) ---
     # Make a copy in memory
-    output_path = "output_image.jpg"
+    output_path = "/output_image_storage"
     downscale_ratio = downscale_image(image_path, output_path)  # modifies in place
     im = cv2.imread(output_path)
     down_h, down_w = im.shape[:2]
@@ -67,7 +67,7 @@ def predict_image(image_path, predictor):
 
     return boxes_rescaled, scores, classes
 
-def visualize_predictions(image_path, boxes, classes, scores, output_path=None, class_names=None, score_threshold=0.5):
+def visualize_predictions(image_path, boxes, classes, scores, output_path="/output_image_storage", class_names=None, score_threshold=0.5):
     """
     Visualize predictions (rescaled boxes) on the original image.
 

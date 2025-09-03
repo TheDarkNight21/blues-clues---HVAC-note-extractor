@@ -53,10 +53,10 @@ def pdf_bytes_to_images_with_save(
     return saved_paths
 
 
-def get_text_from_blueprint(pdf_bytes):
+def store_images(pdf_bytes):
     image_paths_list = pdf_bytes_to_images_with_save(
         pdf_bytes,
-        output_folder="./image_storage",
+        output_folder="./input_image_storage",
         pdf_name="file_name",
         dpi=300,
         fmt='jpeg'
