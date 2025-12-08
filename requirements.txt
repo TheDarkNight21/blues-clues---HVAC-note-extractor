@@ -1,13 +1,24 @@
-torch
+# Core ML & Detectron2 Dependencies (Pinned for compatibility)
+# IMPORTANT: numpy<2.0 is required to avoid potential ABI issues with this PyTorch version
+numpy<2.0
+torch==2.1.0
+torchvision==0.16.0
+torchaudio==2.1.0
+git+https://github.com/facebookresearch/detectron2.git
+
+# Visualization & Training Tools
+pycocotools
+tensorboard
+opencv-python
+tqdm
+Pillow
+
+# API & Application Dependencies
 fastapi
 uvicorn
 python-multipart
-opencv-python
 easyocr
 PyPDF2
 pymupdf
 requests
-Pillow
-tqdm
 pdf2image
-git+https://github.com/facebookresearch/detectron2.git
