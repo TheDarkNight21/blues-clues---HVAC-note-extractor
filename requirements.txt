@@ -1,0 +1,13 @@
+torch
+fastapi
+uvicorn
+python-multipart
+opencv-python
+easyocr
+PyPDF2
+pymupdf
+requests
+Pillow
+tqdm
+pdf2image
+git+https://github.com/facebookresearch/detectron2.git
