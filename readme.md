@@ -8,6 +8,7 @@ Detectron2 + OCR pipeline to detect and extract handwritten / printed HVAC notes
 ---
 
 Table of contents
+- [Demo](#demo)
 - [Project Overview](#project-overview)
 - [Features](#features)
 - [Repository Structure & Key Files](#repository-structure--key-files)
@@ -23,6 +24,14 @@ Table of contents
 - [Contributing](#contributing)
 - [License](#license)
 - [Contact](#contact)
+
+---
+
+## Demo
+
+Watch the end-to-end pipeline run on a real blueprint PDF (upload, detection, OCR, JSON response):
+
+**[▶ Watch the demo video](demo/note-extractor-demo.mp4)** — GitHub plays it directly in the browser.
 
 ---
 
